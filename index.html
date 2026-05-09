@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>伴宠Keeper | 让宠物陪伴你的每一次运动</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Varela+Round&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+  <div id="toast" class="toast" role="status"></div>
+  <div id="petCornerBubble" class="pet-corner-bubble" aria-live="polite"></div>
+
+  <div id="authRoot" class="auth-screen" style="display: none">
+    <div class="logo auth-logo">🐾</div>
+    <h1 class="auth-brand">伴宠Keeper</h1>
+    <p class="auth-sub">让宠物陪伴你的每一次运动</p>
+    <div class="card card--auth">
+      <div class="auth-tabs">
+        <button type="button" class="active" data-mode="login">登录</button>
+        <button type="button" data-mode="register">注册</button>
+      </div>
+      <label class="label">用户名</label>
+      <input id="inputUser" class="input input--cream" autocomplete="username" placeholder="可爱昵称" />
+      <label class="label">密码</label>
+      <input id="inputPass" class="input input--cream" type="password" autocomplete="current-password" placeholder="本地保存 · 仅演示" />
+      <button type="button" id="btnAuth" class="btn btn--macaron btn--block">进入应用</button>
+    </div>
+  </div>
+
+  <div id="appMain" class="app-shell" style="display: none">
+    <div id="headerPoints" class="floating-points" title="当前积分">积分 0</div>
+
+    <!-- 养宠物 -->
+    <section id="screen-home" class="screen screen--home active">
+      <header class="home-topbar card--flat">
+        <div class="home-topbar__brand">伴宠Keeper</div>
+        <div id="homeDate" class="home-topbar__date">—</div>
+        <div class="home-happy">
+          <div class="home-happy__row">
+            <span>幸福值</span>
+            <span id="happinessValue">0 / 100</span>
+          </div>
+          <div class="happiness-bar happiness-bar--cream">
+            <div id="happinessFill" class="happiness-bar__fill" style="width: 0%"></div>
+          </div>
+          <div id="homeCompletionRow" class="home-completion">今日计划完成度：—</div>
+          <div id="petLevelRow" class="home-level">宠物等级 <strong id="petLevelNum">Lv.1</strong> · 累计计划完成 <span id="petTotalPlans">0</span> 次</div>
+          <div id="petStatusChips" class="status-chips" aria-label="宠物状态"></div>
+        </div>
+      </header>
+
+      <div class="pet-stage pet-stage--clouds">
+        <div class="pet-scene" data-scene="default"></div>
+        <div class="pet-actor-wrap pet-actor-wrap--idle">
+          <div id="petBubble" class="pet-bubble">今天要运动陪我玩哦～</div>
+          <div id="petActor" class="pet-actor pet-cat state-normal pet-actor--standee">
+            <div class="pet-body">
+              <div class="pet-ear left"><span class="pet-ear-inner"></span></div>
+              <div class="pet-ear right"><span class="pet-ear-inner"></span></div>
+              <div id="petOutfit" class="pet-outfit"></div>
+              <div class="pet-chest-patch" aria-hidden="true"></div>
+              <div class="pet-face">
+                <div class="pet-forehead-mark" aria-hidden="true"></div>
+                <span class="pet-blush pet-blush--l" aria-hidden="true"></span>
+                <span class="pet-blush pet-blush--r" aria-hidden="true"></span>
+                <span class="pet-whiskers pet-whiskers--l" aria-hidden="true"></span>
+                <span class="pet-whiskers pet-whiskers--r" aria-hidden="true"></span>
+                <div class="pet-eye left"></div>
+                <div class="pet-eye right"></div>
+                <div class="pet-nose-dog" aria-hidden="true"></div>
+                <div class="pet-mouth"></div>
+              </div>
+              <div class="pet-collar-wrap">
+                <div id="petCollar" class="pet-collar"></div>
+                <span class="pet-bell" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="home-actions">
+        <button type="button" id="btnGoExercise" class="home-card-btn home-card-btn--mint">
+          <span class="home-card-btn__icon">🏃</span>
+          <span class="home-card-btn__t">一键去运动</span>
+          <span class="home-card-btn__s">打卡计划 · 自由陪玩</span>
+        </button>
+        <button type="button" id="btnQuickShop" class="home-card-btn home-card-btn--pinklite">
+          <span class="home-card-btn__icon">🛍️</span>
+          <span class="home-card-btn__t">逛商城</span>
+          <span class="home-card-btn__s">用运动积分换零食 · 装扮 · 小窝</span>
+        </button>
+        <button type="button" id="btnQuickFeed" class="home-card-btn home-card-btn--sun">
+          <span class="home-card-btn__icon">🍖</span>
+          <span class="home-card-btn__t">一键投喂</span>
+          <span class="home-card-btn__s">有零食时自动喂食并提升幸福值</span>
+        </button>
+        <button type="button" id="btnOpenBagHome" class="home-card-btn home-card-btn--lavender">
+          <span class="home-card-btn__icon">🎒</span>
+          <span class="home-card-btn__t">我的背包</span>
+          <span class="home-card-btn__s">装扮 · 家居 · 玩具 · 永久可切换</span>
+        </button>
+        <div class="home-card-btn home-card-btn--cream home-card-btn--static">
+          <span class="home-card-btn__icon">💭</span>
+          <span class="home-card-btn__t">今日心情</span>
+          <span id="homeMoodText" class="home-card-btn__s">—</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 去运动 -->
+    <section id="screen-exercise" class="screen">
+      <div class="card card--macaron">
+        <h2 class="screen-title">今日运动目标</h2>
+        <p id="exerciseGoalSummary" class="screen-lead">今日已完成 0 个计划打卡</p>
+        <p class="screen-hint">完成计划前须在弹窗中填写本次运动时长（至少 5 分钟），并上传照片或定位核验至少一项；通过后自动喂食喂水打扫小窝、发放积分并拉高幸福值。今日「计划完成度」与萌宠幸福值联动展示在首页。昨日无计划完成时，今日登录会略降幸福值。</p>
+        <p id="exerciseCompletionLine" class="screen-lead screen-lead--sub">综合完成度：—</p>
+      </div>
+
+      <div class="card card--macaron">
+        <h3 class="screen-subtitle">固定运动计划</h3>
+        <div id="planList" class="plan-list"></div>
+      </div>
+
+      <div class="card card--macaron card--form">
+        <h3 class="screen-subtitle">新建计划</h3>
+        <label class="label">名称</label>
+        <input id="newPlanTitle" class="input input--cream" placeholder="例如：操场慢跑 15 分钟" />
+        <label class="label">运动类型</label>
+        <select id="newPlanSport" class="input input--cream">
+          <option value="run">跑步</option>
+          <option value="walk">散步 / 校园溜达</option>
+          <option value="rope">跳绳</option>
+          <option value="yoga">瑜伽</option>
+          <option value="dorm">宿舍徒手 / 健身</option>
+          <option value="ball">球类运动</option>
+          <option value="bike">骑行</option>
+          <option value="swim">游泳</option>
+          <option value="other">其他</option>
+        </select>
+        <div id="newPlanSportCustomWrap" class="freecheck-custom" style="display: none">
+          <label class="label">自定义运动类型</label>
+          <input id="newPlanSportCustom" class="input input--cream" placeholder="例如：爬楼梯、舞蹈跟练" />
+        </div>
+        <label class="label">计划周期</label>
+        <select id="newPlanMode" class="input input--cream">
+          <option value="daily">每日（每天 1 次）</option>
+          <option value="weekly">每周（按自然周累计）</option>
+        </select>
+        <label class="label">奖励积分</label>
+        <input id="newPlanReward" class="input input--cream" type="number" min="5" max="50" value="12" />
+        <label class="label">每周次数（每周计划）</label>
+        <input id="newPlanWeekly" class="input input--cream" type="number" min="1" max="7" value="3" />
+        <button type="button" id="btnAddPlan" class="btn btn--macaron btn--block">添加计划</button>
+      </div>
+
+      <div class="free-check-wrap">
+        <p id="checkinStatus" class="free-check-hint">计划外运动需手动记录类型、时长与（可选）步数，并上传照片或定位核验后方可打卡；不计入计划完成度、不发任务积分，成功后可小幅提升幸福值。每日限 1 次。</p>
+        <button type="button" id="btnFreeCheckin" class="btn btn-free-check">填写计划外自由打卡</button>
+      </div>
+    </section>
+
+    <!-- 逛商城 -->
+    <section id="screen-shop" class="screen">
+      <div class="shop-balance card--flat">
+        <div class="shop-balance__label">当前积分</div>
+        <div id="shopBalance" class="shop-balance__num">0</div>
+        <div class="shop-balance__hint">完成运动任务赚取积分兑换好物</div>
+      </div>
+      <div class="shop-search-wrap">
+        <input id="shopSearch" type="search" class="input input--cream input--search" placeholder="搜索商品名称…" autocomplete="off" />
+      </div>
+      <div id="shopList" class="shop-list-outer"></div>
+      <p class="shop-footnote">积分仅能通过运动获得，用于兑换宠物用品；不支持充值。稀有 / 限定款积分更高，校园主题会定期上新（演示数据）。</p>
+    </section>
+
+    <!-- 萌友 · 社交与排行（本地演示） -->
+    <section id="screen-social" class="screen">
+      <div class="card card--macaron">
+        <h2 class="screen-title">校园萌宠榜</h2>
+        <p class="screen-hint">按幸福值、宠物等级、背包道具数综合排序。联网后可与同校好友真实 PK。</p>
+        <div id="leaderboardList" class="leaderboard"></div>
+      </div>
+      <div class="card card--macaron">
+        <h3 class="screen-subtitle">好友萌宠互访</h3>
+        <p class="screen-hint">串门查看好友宠物造型、小窝布置与运动状态。当前为单机演示，好友功能待接入账号系统后开放。</p>
+        <div class="social-placeholder">🐾 好友列表开发中…</div>
+      </div>
+      <div class="card card--macaron">
+        <h3 class="screen-subtitle">组队运动 · 遛宠 PK</h3>
+        <p class="screen-hint">与同学组队完成当日计划，可获得额外积分加成、互相监督养宠。后续版本开放，敬请期待。</p>
+        <button type="button" class="btn btn--macaron btn--block" disabled>发起组队（即将上线）</button>
+      </div>
+    </section>
+
+    <!-- 个人中心 -->
+    <section id="screen-profile" class="screen">
+      <div class="profile-hero card--flat">
+        <div class="profile-hero__avatar" id="profileAvatarEmoji">🐱</div>
+        <div class="profile-hero__text">
+          <div id="profileName" class="profile-hero__name">—</div>
+          <div id="profilePet" class="profile-hero__pet">—</div>
+        </div>
+      </div>
+      <p id="profileStreak" class="profile-streak-note">—</p>
+
+      <div class="stats-row">
+        <div class="stat-pill"><span class="stat-pill__n" id="statExerciseDays">0</span><span class="stat-pill__l">运动打卡天</span></div>
+        <div class="stat-pill"><span class="stat-pill__n" id="statStreak">0</span><span class="stat-pill__l">连续满值天</span></div>
+        <div class="stat-pill"><span class="stat-pill__n" id="statItems">0</span><span class="stat-pill__l">背包道具</span></div>
+        <div class="stat-pill"><span class="stat-pill__n" id="statLevel">1</span><span class="stat-pill__l">宠物等级</span></div>
+      </div>
+
+      <h3 class="medal-wall-title">荣誉勋章墙</h3>
+      <p class="medal-wall-note">本地演示效果；联网后好友可在主页查看你的勋章墙。</p>
+      <div id="medalGrid" class="medal-grid medal-grid--wall"></div>
+
+      <div class="profile-links">
+        <button type="button" id="btnOpenSocial" class="profile-link-card">
+          <span>🏆</span> 萌宠榜 &amp; 社交
+        </button>
+        <button type="button" id="btnOpenBagProfile" class="profile-link-card">
+          <span>🎒</span> 我的背包
+        </button>
+        <button type="button" id="btnSettings" class="profile-link-card">
+          <span>⚙️</span> 设置
+        </button>
+        <button type="button" id="btnRules" class="profile-link-card">
+          <span>📜</span> 规则说明
+        </button>
+        <button type="button" id="btnLogout" class="profile-link-card profile-link-card--ghost">
+          <span>🚪</span> 退出登录
+        </button>
+      </div>
+      <p id="equippedSummary" class="equipped-line">还没有穿戴装扮…</p>
+    </section>
+
+    <nav class="bottom-nav bottom-nav--five" aria-label="主导航">
+      <button type="button" data-nav="home" class="active">
+        <span class="bottom-nav__icon">🐾</span><span class="bottom-nav__txt">养宠物</span>
+      </button>
+      <button type="button" data-nav="exercise">
+        <span class="bottom-nav__icon">🏃</span><span class="bottom-nav__txt">去运动</span>
+      </button>
+      <button type="button" data-nav="shop">
+        <span class="bottom-nav__icon">🛍️</span><span class="bottom-nav__txt">逛商城</span>
+      </button>
+      <button type="button" data-nav="social">
+        <span class="bottom-nav__icon">🌈</span><span class="bottom-nav__txt">萌友</span>
+      </button>
+      <button type="button" data-nav="profile">
+        <span class="bottom-nav__icon">👤</span><span class="bottom-nav__txt">我的</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- 全屏领养 · 横向滑动 -->
+  <div id="modalAdopt" class="modal-overlay modal-overlay--adopt" style="display: none" role="dialog" aria-modal="true" aria-labelledby="adoptTitle">
+    <div class="adopt-full">
+      <h2 id="adoptTitle" class="adopt-full__title">选一只小伙伴陪你运动吧</h2>
+      <p class="adopt-full__sub">左右滑动卡片 · 每个账号仅可领养一次 · 终身绑定不可更换</p>
+      <div id="adoptCarousel" class="adopt-carousel">
+        <div class="adopt-slide" data-pet="cat">
+          <div class="adopt-slide__card">
+            <div class="adopt-slide__draw adopt-slide__draw--cat">🐱</div>
+            <div class="adopt-slide__name">软萌小猫</div>
+            <div class="adopt-slide__desc">爱伸懒腰 · 陪你慢跑</div>
+          </div>
+        </div>
+        <div class="adopt-slide" data-pet="dog">
+          <div class="adopt-slide__card">
+            <div class="adopt-slide__draw adopt-slide__draw--dog">🐶</div>
+            <div class="adopt-slide__name">元气小狗</div>
+            <div class="adopt-slide__desc">摇尾巴 · 等你打卡</div>
+          </div>
+        </div>
+      </div>
+      <div class="adopt-dots" aria-hidden="true">
+        <span class="adopt-dot active"></span><span class="adopt-dot"></span>
+      </div>
+      <button type="button" id="btnConfirmAdopt" class="btn btn--macaron btn--adopt">确认领养 TA</button>
+    </div>
+  </div>
+
+  <!-- 任务奖励弹窗 -->
+  <div id="modalReward" class="modal-overlay modal-overlay--reward" style="display: none" role="dialog" aria-modal="true">
+    <div class="reward-card">
+      <div class="reward-card__spark">✨</div>
+      <h3 id="rewardTitle" class="reward-card__title">太棒啦</h3>
+      <div class="reward-card__row" id="rewardPoints">+0 积分</div>
+      <div class="reward-card__row reward-card__row--happy" id="rewardHappy">幸福值 +0</div>
+      <div id="rewardExtra" class="reward-card__extra" style="display: none"></div>
+      <button type="button" id="btnRewardOk" class="btn btn--macaron btn--block">收下奖励</button>
+    </div>
+  </div>
+
+  <!-- 勋章成就弹窗 -->
+  <div id="modalMedal" class="modal-overlay modal-overlay--medal" style="display: none" role="dialog" aria-modal="true">
+    <div class="medal-pop">
+      <div id="medalPopIcon" class="medal-pop__icon">🌟</div>
+      <div id="medalPopTitle" class="medal-pop__tag">解锁成就</div>
+      <h3 id="medalPopName" class="medal-pop__name">周守护勋章</h3>
+      <p id="medalPopSub" class="medal-pop__sub">连续 7 天幸福值满格</p>
+      <button type="button" id="btnMedalOk" class="btn btn--macaron btn--block">太好啦</button>
+    </div>
+  </div>
+
+  <!-- 计划外自由打卡 -->
+  <div id="modalFreeCheck" class="modal-overlay" style="display: none" role="dialog" aria-modal="true" aria-labelledby="freeCheckTitle">
+    <div class="modal-sheet modal-sheet--freecheck">
+      <h3 id="freeCheckTitle">计划外 · 自由运动打卡</h3>
+      <p class="freecheck-lead">请填写本次<strong>固定计划之外</strong>的真实运动，并至少完成一项核验（照片或定位）。无需手环等专业设备。</p>
+      <label class="label">运动类型</label>
+      <select id="freeSportType" class="input input--cream">
+        <option value="run">跑步</option>
+        <option value="walk">散步 / 校园溜达</option>
+        <option value="rope">跳绳</option>
+        <option value="yoga">瑜伽</option>
+        <option value="dorm">宿舍徒手 / 健身</option>
+        <option value="ball">球类运动</option>
+        <option value="bike">骑行</option>
+        <option value="swim">游泳</option>
+        <option value="other">其他（自填）</option>
+      </select>
+      <div id="freeSportCustomWrap" class="freecheck-custom" style="display: none">
+        <label class="label">自定义类型</label>
+        <input id="freeSportCustom" class="input input--cream" placeholder="例如：爬楼梯、舞蹈跟练" />
+      </div>
+      <label class="label">运动时长（分钟）</label>
+      <input id="freeDuration" class="input input--cream" type="number" min="1" step="1" placeholder="如 20" />
+      <label class="label">步数（可选）</label>
+      <input id="freeSteps" class="input input--cream" type="number" min="0" step="1" placeholder="无设备可手填估算步数" />
+      <div class="freecheck-verify">
+        <p class="label" style="margin-top: 4px">核验（至少选一项）</p>
+        <div class="freecheck-verify-row">
+          <label class="freecheck-file-btn">
+            <input type="file" id="freePhoto" accept="image/*" capture="environment" class="freecheck-file-input" />
+            <span>📷 上传运动照片</span>
+          </label>
+          <span id="freePhotoName" class="freecheck-file-name"></span>
+        </div>
+        <button type="button" id="btnFreeCheckLoc" class="btn btn--ghost btn--block freecheck-loc-btn">📍 获取当前位置留痕</button>
+        <p id="freeLocResult" class="freecheck-loc-result"></p>
+      </div>
+      <p class="freecheck-note">定位与照片仅保存在本机，用于诚信打卡示意；正式版可对接服务端核验。</p>
+      <div class="freecheck-actions">
+        <button type="button" id="btnFreeCheckCancel" class="btn btn--ghost btn--block">取消</button>
+        <button type="button" id="btnFreeCheckSubmit" class="btn btn--macaron btn--block">提交打卡</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 固定计划打卡核验 -->
+  <div id="modalPlanVerify" class="modal-overlay" style="display: none" role="dialog" aria-modal="true" aria-labelledby="planVerifyTitle">
+    <div class="modal-sheet modal-sheet--freecheck">
+      <h3 id="planVerifyTitle">核验 · 运动计划</h3>
+      <p id="planVerifyMeta" class="freecheck-lead"></p>
+      <p class="freecheck-lead">请如实填写<strong>本次</strong>完成情况，并至少完成一项核验（照片或定位）。数据仅保存在本机。</p>
+      <label class="label">运动时长（分钟）</label>
+      <input id="planVerifyDuration" class="input input--cream" type="number" min="1" step="1" placeholder="如 20" />
+      <label class="label">步数（可选）</label>
+      <input id="planVerifySteps" class="input input--cream" type="number" min="0" step="1" placeholder="无设备可手填估算步数" />
+      <div class="freecheck-verify">
+        <p class="label" style="margin-top: 4px">核验（至少选一项）</p>
+        <div class="freecheck-verify-row">
+          <label class="freecheck-file-btn">
+            <input type="file" id="planVerifyPhoto" accept="image/*" capture="environment" class="freecheck-file-input" />
+            <span>📷 上传运动照片</span>
+          </label>
+          <span id="planVerifyPhotoName" class="freecheck-file-name"></span>
+        </div>
+        <button type="button" id="btnPlanVerifyLoc" class="btn btn--ghost btn--block freecheck-loc-btn">📍 获取当前位置留痕</button>
+        <p id="planVerifyLocResult" class="freecheck-loc-result"></p>
+      </div>
+      <div class="freecheck-actions">
+        <button type="button" id="btnPlanVerifyCancel" class="btn btn--ghost btn--block">取消</button>
+        <button type="button" id="btnPlanVerifySubmit" class="btn btn--macaron btn--block">提交并完成计划</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 规则说明 -->
+  <div id="modalRules" class="modal-overlay" style="display: none" role="dialog" aria-modal="true">
+    <div class="modal-sheet modal-sheet--rules">
+      <h3>规则说明</h3>
+      <ul class="rules-list">
+        <li>首次进入须领养小猫或小狗，与账号终身绑定，不可重复领养或更换。</li>
+        <li>运动即养宠：完成固定计划须核验（时长 + 照片或定位），通过后视为自动喂食喂水打扫，幸福值与计划完成度联动；完成度或幸福值低于 50% 时触发撒娇提醒。</li>
+        <li>计划外自由打卡须填写运动类型、时长（至少 5 分钟），并上传照片或完成定位核验之一；每日限 1 次；不计入计划完成度、不发任务积分，成功后可提升幸福值（随时长略增）。</li>
+        <li>每完成一次计划发放运动积分，仅可在商城兑换宠物用品；装扮 / 家居 / 玩具永久拥有、可反复切换；零食喂食会消耗背包数量。</li>
+        <li>累计完成计划可提升宠物等级，解锁毛色微调与更活泼动作（视觉层）。</li>
+        <li>连续每日「结束时幸福值为 100」累积天数解锁勋章；数据存于本机，清除站点数据会重置。</li>
+      </ul>
+      <button type="button" id="btnRulesClose" class="btn btn--macaron btn--block">知道啦</button>
+    </div>
+  </div>
+
+  <!-- 背包装扮 · 底部上拉 -->
+  <div id="panelBag" class="sheet-bag">
+    <div class="sheet-bag__head">
+      <span>我的背包</span>
+      <button type="button" id="btnCloseBag" class="sheet-bag__close" aria-label="关闭">×</button>
+    </div>
+    <p class="sheet-bag__tip">点击道具一键喂食 / 穿戴 / 摆放 · 主页实时刷新</p>
+    <div id="bagList" class="bag-grid"></div>
+  </div>
+  <div id="panelBagBackdrop" class="sheet-backdrop"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
